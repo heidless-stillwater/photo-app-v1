@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html data-bs-theme="dark" lang="en">
   <head>
     <title><%= content_for(:title) || "Photo App V1" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -20,6 +20,6 @@
 
   <body>
     <%= render 'shared/navbar' %>
-    <%= yield %>
+    <%= render 'shared/sidebar_1'%>
   </body>
 </html>
