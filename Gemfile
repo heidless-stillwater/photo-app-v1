@@ -64,3 +64,5 @@ gem "devise", "~> 4.9"
 gem "devise-bootstrap-views", "~> 1.1"
 
 gem "sass-rails", "~> 6.0"
+
+gem "font-awesome-rails", "~> 4.7"

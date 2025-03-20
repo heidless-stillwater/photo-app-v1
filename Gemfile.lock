@@ -120,6 +120,8 @@ GEM
     ffi (1.17.1-x86_64-darwin)
     ffi (1.17.1-x86_64-linux-gnu)
     ffi (1.17.1-x86_64-linux-musl)
+    font-awesome-rails (4.7.0.9)
+      railties (>= 3.2, < 9.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
     i18n (1.14.7)
@@ -338,6 +340,7 @@ DEPENDENCIES
   debug
   devise (~> 4.9)
   devise-bootstrap-views (~> 1.1)
+  font-awesome-rails (~> 4.7)
   jbuilder
   jsbundling-rails
   nokogiri (= 1.16.6)
