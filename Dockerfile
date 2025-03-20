@@ -1,83 +1,52 @@
-# syntax = docker/dockerfile:1
+# Use the official Ruby image from Docker Hub
+# https://hub.docker.com/_/ruby
 
-# This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
-# docker build -t my-app .
-# docker run -d -p 80:80 -p 443:443 --name my-app -e RAILS_MASTER_KEY=<value from config/master.key> my-app
+# [START cloudrun_rails_base_image]
+# Pinning the OS to buster because the nodejs install script is buster-specific.
+# Be sure to update the nodejs install command if the base image OS is updated.
 
-# Make sure RUBY_VERSION matches the Ruby version in .ruby-version
-ARG RUBY_VERSION=3.2.2
-FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
+FROM ruby:3.2
+# ARG RUBY_VERSION=3.2.2
+# FROM docker.io/library/ruby:$RUBY_VERSION-buster AS base
 
-# Rails app lives here
-WORKDIR /rails
+# ARG RUBY_VERSION=3.2.2
+# FROM docker.io/library/ruby:$RUBY_VERSION-buster AS base
 
-# Install base packages
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 libvips postgresql-client && \
-    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+# [END cloudrun_rails_base_image]
 
-# Set production environment
-ENV RAILS_ENV="production" \
-    BUNDLE_DEPLOYMENT="1" \
-    BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development"
+RUN (curl -sS https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor | apt-key add -) && \
+    echo "deb https://deb.nodesource.com/node_14.x buster main"      > /etc/apt/sources.list.d/nodesource.list && \
+    apt-get update && apt-get install -y nodejs lsb-release
 
-# Throw-away build stage to reduce size of final image
-FROM base AS build
+RUN (curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -) && \
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
+    apt-get update && apt-get install -y yarn
 
-# Install packages needed to build gems and node modules
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git libpq-dev node-gyp pkg-config python-is-python3 && \
-    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+WORKDIR /app
 
-# Install JavaScript dependencies
-ARG NODE_VERSION=22.12.0
-ARG YARN_VERSION=1.22.22
-ENV PATH=/usr/local/node/bin:$PATH
-RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
-    /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node && \
-    npm install -g yarn@$YARN_VERSION && \
-    rm -rf /tmp/node-build-master
-
-# Install application gems
+# Application dependencies
 COPY Gemfile Gemfile.lock ./
-RUN bundle install && \
-    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
-    bundle exec bootsnap precompile --gemfile
 
-# Install node modules
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
-
-# Copy application code
-COPY . .
-
-# Precompile bootsnap code for faster boot times
-RUN bundle exec bootsnap precompile app/ lib/
-
-# Precompiling assets for production without requiring secret RAILS_MASTER_KEY
-RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
+RUN gem install bundler && \
+    bundle config set --local deployment 'true' && \
+    bundle config set --local without 'development test' && \
+    bundle install
 
 
-RUN rm -rf node_modules
+# Copy application code to the container image
+COPY . /app
 
+ENV RAILS_ENV=production
+ENV RAILS_SERVE_STATIC_FILES=true
+# Redirect Rails log to STDOUT for Cloud Run to capture
+ENV RAILS_LOG_TO_STDOUT=true
+# [START cloudrun_rails_dockerfile_key]
+ARG MASTER_KEY
+ENV RAILS_MASTER_KEY=${MASTER_KEY}
+# [END cloudrun_rails_dockerfile_key]
 
-# Final stage for app image
-FROM base
+# pre-compile Rails assets with master key
+RUN bundle exec rake assets:precompile
 
-# Copy built artifacts: gems, application
-COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
-COPY --from=build /rails /rails
-
-# Run and own only the runtime files as a non-root user for security
-RUN groupadd --system --gid 1000 rails && \
-    useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash && \
-    chown -R rails:rails db log storage tmp
-USER 1000:1000
-
-# Entrypoint prepares the database.
-ENTRYPOINT ["/rails/bin/docker-entrypoint"]
-
-# Start the server by default, this can be overwritten at runtime
-EXPOSE 3000
-CMD ["./bin/rails", "server"]
+EXPOSE 8080
+CMD ["bin/rails", "server", "-b", "0.0.0.0", "-p", "8080"]

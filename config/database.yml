@@ -28,7 +28,7 @@ development:
   # To create additional roles in PostgreSQL see `$ createuser --help`.
   # When left blank, PostgreSQL will use the default role. This is
   # the same name as the operating system user running Rails.
-  #username: photo_app_v1
+  #username: rails_message_me_7
 
   # The password associated with the PostgreSQL role (username).
   #password:
@@ -78,8 +78,11 @@ test:
 # Read https://guides.rubyonrails.org/configuring.html#configuring-a-database
 # for a full overview on how database connection configuration can be specified.
 #
+# [START cloudrun_rails_database]
 production:
   <<: *default
-  database: photo_app_v1_production
-  username: photo_app_v1
-  password: <%= ENV["PHOTO_APP_V1_DATABASE_PASSWORD"] %>
+  database: <%= Rails.application.credentials.dig(:gcp, :db_database) %>
+  username: <%= Rails.application.credentials.dig(:gcp, :db_username) %>
+  password: <%= Rails.application.credentials.dig(:gcp, :db_password) %>
+  host: "<%= ENV.fetch("DB_SOCKET_DIR") { '/cloudsql' } %>/<%= Rails.application.credentials.dig(:gcp, :db_instance_host) %>"
+# [END cloudrun_rails_database]
