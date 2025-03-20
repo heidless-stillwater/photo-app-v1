@@ -20,6 +20,10 @@
 
   <body>
     <%= render 'shared/navbar' %>
-    <%= render 'shared/sidebar_1'%>
+    <div class="container">
+      <%= render 'layouts/messages' %>
+      <%= yield %>
+    </div>
   </body>
 </html>
+
