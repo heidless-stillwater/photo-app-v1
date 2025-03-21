@@ -23,7 +23,7 @@
               <li>Email support</li>
               <li>Help center access</li>
             </ul>
-            <button type="button" class="w-100 btn btn-lg btn-outline-primary">Sign up for free</button>
+            <%= link_to 'Sign up for free', new_user_registration_path, class: 'w-100 btn btn-lg btn-outline-primary sign-up' %>
           </div>
         </div>
       </div>
@@ -40,7 +40,7 @@
               <li>Priority email support</li>
               <li>Help center access</li>
             </ul>
-            <button type="button" class="w-100 btn btn-lg btn-primary">Get started</button>
+            <%= link_to 'Get Started', new_user_registration_path, class: 'w-100 btn btn-lg btn-primary sign-up' %>
           </div>
         </div>
       </div>
@@ -57,7 +57,8 @@
               <li>Phone and email support</li>
               <li>Help center access</li>
             </ul>
-            <button type="button" class="w-100 btn btn-lg btn-primary">Contact us</button>
+            <%= link_to 'Gontact Us', new_user_registration_path, class: 'w-100 btn btn-lg btn-primary sign-up' %>
+
           </div>
         </div>
       </div>
