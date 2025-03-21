@@ -3,14 +3,11 @@
   <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "btn btn-primary mt-5" %>
 <% else %>
 
-  <div class="jumbotron mb-5 rounded-pill">
-    <h2>Welcome to the Photo Management App!</h2>
-    <p class="lead">
-      You'll love managing your Photos with our application. Sign up!
-    </p>
-    <%= button_to "Sign In", new_user_session_path, class: "w-20 btn btn-lg btn-success mt-3" %>
+  <div class="text-center mt-5 mb-5">
+    <h1 class="card-title pricing-card-title" >Photo Management App!</h2>
+    <%= button_to "Sign In", new_user_session_path, class: "w-20 btn btn-lg btn-primary mt-5" %>
   </div>
-
+    
   <main>
     <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
       <div class="col">
