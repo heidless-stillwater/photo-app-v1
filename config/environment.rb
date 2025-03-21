@@ -5,7 +5,7 @@ require_relative "application"
 Rails.application.initialize!
 
 ActionMailer::Base.smtp_settings = {
-  :user_name => Rails.application.credentials.dig(:sendgrid_mailer, :  :user_name), # This is the string literal 'apikey', NOT the ID of your API key
+  :user_name => Rails.application.credentials.dig(:sendgrid_mailer, :user_name), # This is the string literal 'apikey', NOT the ID of your API key
   :password => Rails.application.credentials.dig(:sendgrid_mailer, :api_key_secret),
   :domain => Rails.application.credentials.dig(:sendgrid_mailer, :domain),
   :address => 'smtp.sendgrid.net',
