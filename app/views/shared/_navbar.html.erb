@@ -9,9 +9,6 @@
         <li class="nav-item">
           <%= link_to "Home", root_path, class: "nav-link active" %>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
-        </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Dropdown
@@ -27,6 +24,19 @@
           <a class="nav-link disabled" aria-disabled="true">Disabled</a>
         </li>
       </ul>
+      
+      <ul class="ml-auto navbar-nav">
+        <li class="nav-item user-name me-3">
+          <%= fa_icon 'user' %> <%= current_user ? current_user.email : "Not logged in" %>
+        </li>
+        <li class="nav-item me-3">
+          <%= button_to "Sign In", new_user_session_path, class: "btn btn-xs btn-success logout-button" %>
+        </li>
+        <li class="nav-item me-3">
+          <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "btn btn-xs btn-danger logout-button" %>
+        </li>
+      </ul>
+      
       <form class="d-flex" role="search">
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Search</button>
