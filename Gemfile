@@ -68,3 +68,9 @@ gem "sass-rails", "~> 6.0"
 gem "font-awesome-rails", "~> 4.7"
 
 gem "stripe", "~> 13.5"
+
+gem "carrierwave", "~> 3.1"
+
+gem "mini_magick", "~> 5.2"
+
+gem "fog-core", "~> 2.6"
