@@ -1,7 +1,13 @@
 Rails.application.routes.draw do
   devise_for :users, :controllers => { :registrations => 'registrations' }
   root "welcome#index"
-  resources :users
+  
+  resources :users, except: [:new] do
+    member do
+      # remove_image_post_path(image)
+      delete :remove_image
+    end
+  end
 
   # root "application#stripe_payment"
   resources :charges, only: :create

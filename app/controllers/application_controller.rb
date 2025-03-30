@@ -11,8 +11,8 @@ class ApplicationController < ActionController::Base
   protected
 
   def configure_permitted_parameter_fields
-    devise_parameter_sanitizer.permit(:sign_up, keys: [ :avatar, :username ] )    # new
-    devise_parameter_sanitizer.permit(:account_update, keys: [ :avatar, :username ])   # edit
+    devise_parameter_sanitizer.permit(:sign_up, keys: [ :avatar, :username, images: [] ] )    # new
+    devise_parameter_sanitizer.permit(:account_update, keys: [ :avatar, :username, images: [] ])   # edit
   end
 
 end
