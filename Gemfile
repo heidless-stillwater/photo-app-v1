@@ -71,6 +71,6 @@ gem "stripe", "~> 13.5"
 
 gem "carrierwave", "~> 3.1"
 
-gem "mini_magick", "~> 5.2"
+gem "mini_magick", "~> 5.3"
 
 gem "fog-core", "~> 2.6"
